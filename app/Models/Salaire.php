@@ -12,7 +12,7 @@ class Salaire extends Model
         'employer_id',
         'type',
         'prix',
-        'product_id'
+        'produit_id'
     ];
 
     public function employer(): BelongsTo
@@ -22,7 +22,7 @@ class Salaire extends Model
 
     public function produit(): BelongsTo
     {
-        return $this->belongsTo(Produit::class, 'product_id');
+        return $this->belongsTo(Produit::class, 'produit_id');
     }
 
     public function rapportsSalaires(): HasMany

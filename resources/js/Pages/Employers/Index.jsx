@@ -4,7 +4,9 @@ import Heading from '@/components/Heading/Heading'
 import Filters from './partials/index/Filters'
 import EmployersTable from './partials/index//EmployersTable'
 import Pagination from './partials/index/Pagination'
-import { router } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
+import { Button } from '@/components/ui/button'
+import { ListRestart, Plus } from 'lucide-react'
 
 export const EmployerIndexContext = createContext({})
 
@@ -21,27 +23,16 @@ export default function Index({ employers, filters }) {
 
                     {/* Boutons Nouvelle et Réinitialiser */}
                     <div className="flex justify-between items-center">
-                        <a
-                            href={route('employers.create')}
-                            className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded"
-                        >
-                            Nouveau employé
-                        </a>
-                        <button
-                            onClick={() =>
-                                router.get(
-                                    route('employers.index'),
-                                    {},
-                                    {
-                                        preserveState: true,
-                                        preserveScroll: true,
-                                    }
-                                )
-                            }
-                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded"
-                        >
-                            Réinitialiser les filtres
-                        </button>
+                        <Button className="bg-indigo-500 hover:bg-indigo-600">
+                            <Link
+                                href={route('employers.create')}
+                                className="flex gap-3 items-center"
+                            >
+                                <Plus />
+                                Nouveau Employe
+                            </Link>
+                        </Button>
+
                     </div>
 
                     {/* Filtrage */}

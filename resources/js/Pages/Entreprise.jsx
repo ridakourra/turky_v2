@@ -12,6 +12,8 @@ import {
     BadgeDollarSign,
     FileSignature,
     Check,
+    Settings,
+    Save,
 } from 'lucide-react'
 import LayoutAdmin from '@/Layouts/LayoutAdmin'
 import { useForm } from '@inertiajs/react'
@@ -41,128 +43,215 @@ export default function Entreprise({ entreprise }) {
         })
     }
 
+    const formFields = [
+        {
+            name: 'nom',
+            label: "Nom de l'entreprise",
+            icon: Building2,
+            type: 'text',
+            required: true,
+            color: 'text-indigo-600',
+            span: 'md:col-span-1',
+        },
+        {
+            name: 'responsable',
+            label: 'Responsable',
+            icon: User,
+            type: 'text',
+            color: 'text-blue-600',
+            span: 'md:col-span-1',
+        },
+        {
+            name: 'email',
+            label: 'Adresse Email',
+            icon: Mail,
+            type: 'email',
+            color: 'text-cyan-600',
+            span: 'md:col-span-1',
+        },
+        {
+            name: 'telephone',
+            label: 'Numéro de Téléphone',
+            icon: Phone,
+            type: 'tel',
+            color: 'text-green-600',
+            span: 'md:col-span-1',
+        },
+        {
+            name: 'adresse',
+            label: 'Adresse Complète',
+            icon: MapPin,
+            type: 'text',
+            color: 'text-orange-600',
+            span: 'md:col-span-2',
+        },
+        {
+            name: 'ice',
+            label: 'Numéro ICE',
+            icon: FileText,
+            type: 'text',
+            color: 'text-purple-600',
+            span: 'md:col-span-1',
+        },
+        {
+            name: 'rc',
+            label: 'Registre de Commerce',
+            icon: BadgeDollarSign,
+            type: 'text',
+            color: 'text-emerald-600',
+            span: 'md:col-span-1',
+        },
+        {
+            name: 'patente',
+            label: 'Numéro de Patente',
+            icon: FileSignature,
+            type: 'text',
+            color: 'text-pink-600',
+            span: 'md:col-span-2',
+        },
+    ]
+
     return (
         <LayoutAdmin title="Entreprise">
-            <Heading
-                title="Informations Entreprise"
-                description="Modifiez les détails de l'entreprise, y compris le nom, les informations de
-                        contact et les identifiants administratifs."
-            />
-            <Card className="mx-auto p-4 py-5 shadow-xl">
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Nom */}
-                        <div>
-                            <Label htmlFor="nom" className="flex items-center gap-2">
-                                <Building2 className="w-4 h-4" /> Nom{' '}
-                                <em className="text-red-500 text-xs">{errors.nom}</em>
-                            </Label>
-                            <Input
-                                id="nom"
-                                name="nom"
-                                value={data.nom}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
+            <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(99,102,241,0.05)_1px,_transparent_0)] bg-[length:20px_20px]"></div>
 
-                        {/* Responsable */}
-                        <div>
-                            <Label htmlFor="responsable" className="flex items-center gap-2">
-                                <User className="w-4 h-4" /> Responsable
-                                <em className="text-red-500 text-xs">{errors.responsable}</em>
-                            </Label>
-                            <Input
-                                id="responsable"
-                                name="responsable"
-                                value={data.responsable}
-                                onChange={handleChange}
-                            />
-                        </div>
+                <div className="relative z-10 max-w-6xl mx-auto space-y-8 p-6">
+                    {/* Hero Header */}
+                    <Card className="overflow-hidden border-0 shadow-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 text-white">
+                        <div className="relative p-8">
+                            <div className="absolute inset-0 bg-black/10"></div>
+                            {/* Decorative elements */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
 
-                        {/* Email */}
-                        <div>
-                            <Label htmlFor="email" className="flex items-center gap-2">
-                                <Mail className="w-4 h-4" /> Email
-                                <em className="text-red-500 text-xs">{errors.email}</em>
-                            </Label>
-                            <Input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={data.email}
-                                onChange={handleChange}
-                            />
+                            <div className="relative z-10">
+                                <div className="flex items-center space-x-4 mb-4">
+                                    <div className="p-4 bg-white/20 rounded-2xl">
+                                        <Settings className="w-8 h-8 text-white" />
+                                    </div>
+                                    <div>
+                                        <h1 className="text-3xl font-bold">
+                                            Configuration Entreprise
+                                        </h1>
+                                        <p className="text-indigo-100 mt-1">
+                                            Gérez les informations principales de votre entreprise
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </Card>
 
-                        {/* Téléphone */}
-                        <div>
-                            <Label htmlFor="telephone" className="flex items-center gap-2">
-                                <Phone className="w-4 h-4" /> Téléphone
-                                <em className="text-red-500 text-xs">{errors.telephone}</em>
-                            </Label>
-                            <Input
-                                id="telephone"
-                                name="telephone"
-                                value={data.telephone}
-                                onChange={handleChange}
-                            />
-                        </div>
+                    {/* Main Form Card */}
+                    <Card className="overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-white to-gray-50/50">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/30 to-transparent"></div>
 
-                        {/* Adresse */}
-                        <div className="md:col-span-2">
-                            <Label htmlFor="adresse" className="flex items-center gap-2">
-                                <MapPin className="w-4 h-4" /> Adresse
-                                <em className="text-red-500 text-xs">{errors.adresse}</em>
-                            </Label>
-                            <Input
-                                id="adresse"
-                                name="adresse"
-                                value={data.adresse}
-                                onChange={handleChange}
-                            />
-                        </div>
+                            <CardHeader className="relative z-10 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-1 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full"></div>
+                                    <div>
+                                        <CardTitle className="text-2xl font-bold text-gray-900">
+                                            Informations de l'Entreprise
+                                        </CardTitle>
+                                        <CardDescription className="text-gray-600 mt-1">
+                                            Modifiez les détails administratifs et de contact
+                                        </CardDescription>
+                                    </div>
+                                </div>
+                            </CardHeader>
 
-                        {/* ICE */}
-                        <div>
-                            <Label htmlFor="ice" className="flex items-center gap-2">
-                                <FileText className="w-4 h-4" /> ICE
-                                <em className="text-red-500 text-xs">{errors.ice}</em>
-                            </Label>
-                            <Input id="ice" name="ice" value={data.ice} onChange={handleChange} />
-                        </div>
+                            <CardContent className="relative z-10 p-8">
+                                <div className="space-y-8">
+                                    <div className="grid gap-6 md:grid-cols-2">
+                                        {formFields.map(field => {
+                                            const IconComponent = field.icon
+                                            const hasError = errors[field.name]
 
-                        {/* RC */}
-                        <div>
-                            <Label htmlFor="rc" className="flex items-center gap-2">
-                                <BadgeDollarSign className="w-4 h-4" /> RC
-                                <em className="text-red-500 text-xs">{errors.rc}</em>
-                            </Label>
-                            <Input id="rc" name="rc" value={data.rc} onChange={handleChange} />
-                        </div>
+                                            return (
+                                                <div
+                                                    key={field.name}
+                                                    className={`group ${field.span || ''}`}
+                                                >
+                                                    <Label
+                                                        htmlFor={field.name}
+                                                        className="flex items-center space-x-3 mb-3 text-sm font-semibold text-gray-700"
+                                                    >
+                                                        <div
+                                                            className={`p-2 rounded-lg bg-gradient-to-br from-gray-100 to-gray-50 ${field.color}`}
+                                                        >
+                                                            <IconComponent className="w-4 h-4" />
+                                                        </div>
+                                                        <span>{field.label}</span>
+                                                        {field.required && (
+                                                            <span className="text-red-500 text-xs">
+                                                                *
+                                                            </span>
+                                                        )}
+                                                    </Label>
 
-                        {/* Patente */}
-                        <div className="md:col-span-2">
-                            <Label htmlFor="patente" className="flex items-center gap-2">
-                                <FileSignature className="w-4 h-4" /> Patente
-                                <em className="text-red-500 text-xs">{errors.patente}</em>
-                            </Label>
-                            <Input
-                                id="patente"
-                                name="patente"
-                                value={data.patente}
-                                onChange={handleChange}
-                            />
-                        </div>
+                                                    <div className="relative">
+                                                        <Input
+                                                            id={field.name}
+                                                            name={field.name}
+                                                            type={field.type}
+                                                            value={data[field.name]}
+                                                            onChange={handleChange}
+                                                            required={field.required}
+                                                            className={`h-12 transition-all duration-300 border-2 focus:border-indigo-500 focus:ring-indigo-500/20 ${
+                                                                hasError
+                                                                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                                                    : 'border-gray-200 hover:border-gray-300'
+                                                            }`}
+                                                        />
+                                                        {hasError && (
+                                                            <div className="absolute -bottom-6 left-0">
+                                                                <p className="text-xs text-red-600 font-medium">
+                                                                    {errors[field.name]}
+                                                                </p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
 
-                        <div className="md:col-span-2 flex justify-end">
-                            <Button disabled={processing} type="submit" className="px-6">
-                                <Check /> {processing ? 'Attends...' : 'Enregistrer'}
-                            </Button>
+                                    {/* Submit Button */}
+                                    <div className="flex justify-end pt-6 border-t border-gray-100">
+                                        <Button
+                                            disabled={processing}
+                                            onClick={handleSubmit}
+                                            className="group relative overflow-hidden bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 px-8 py-3 h-12"
+                                        >
+                                            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] transition-transform duration-300 group-hover:translate-x-0"></div>
+                                            <div className="relative z-10 flex items-center space-x-3">
+                                                {processing ? (
+                                                    <>
+                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                        <span className="font-medium">
+                                                            Enregistrement...
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Save className="w-4 h-4" />
+                                                        <span className="font-medium">
+                                                            Enregistrer les modifications
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
                         </div>
-                    </form>
-                </CardContent>
-            </Card>
+                    </Card>
+                </div>
+            </div>
         </LayoutAdmin>
     )
 }

@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('employers', function (Blueprint $table) {
             $table->id();
             $table->string('cin')->unique();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->boolean('actif')->default(true);
-            $table->date('date_embauche');
-            $table->enum('fonction', ['directeur', 'comptable', 'livreur']);
+            $table->date('date_embauche')->nullable();
+            $table->enum('fonction', ['directeur', 'comptable', 'livreur', 'ouvrier']);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

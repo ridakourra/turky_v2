@@ -147,13 +147,13 @@ class DatabaseSeeder extends Seeder
                 'employer_id' => 1,
                 'type' => 'mensuel',
                 'prix' => 6000,
-                'product_id' => null
+                'produit_id' => null
             ],
             [
                 'employer_id' => 2,
                 'type' => 'journalier',
                 'prix' => 300,
-                'product_id' => null
+                'produit_id' => null
             ]
         ]);
 

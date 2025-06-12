@@ -14,7 +14,8 @@ class ClientController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function($q) use($search) {
                 $q->where('nom', 'like', "%{$search}%")
-                  ->orWhere('cin', 'like', "%{$search}%");
+                  ->orWhere('cin', 'like', "%{$search}%")
+                  ->orWhere('telephone', 'like', "%{$search}%");
             });
         }
 

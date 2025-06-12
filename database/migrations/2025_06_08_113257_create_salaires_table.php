@@ -11,9 +11,9 @@ class CreateSalairesTable extends Migration
         Schema::create('salaires', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employer_id')->constrained('employers')->onDelete('cascade');
-            $table->enum('type', ['mensuel', 'journalier', 'horaire', 'unité']);
+            $table->enum('type', ['mensuel', 'journalier', 'horaire', 'unite']);
             $table->decimal('prix', 15, 2);
-            $table->foreignId('product_id')->nullable()->constrained('produits')->onDelete('cascade');
+            $table->foreignId('produit_id')->nullable()->constrained('produits')->onDelete('cascade');
             $table->timestamps();
         });
     }

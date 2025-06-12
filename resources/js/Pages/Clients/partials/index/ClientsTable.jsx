@@ -18,11 +18,11 @@ export default function ClientsTable() {
     const { data } = clients
 
     const handleDelete = id => {
-        if (confirm('Are you sure you want to delete this client?')) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) {
             router.delete(route('clients.destroy', id), {
                 preserveState: true,
                 onSuccess: page => {
-                    ;<Toast flash={page.props.flash} />
+                    Toast(page.props.flash)
                 },
             })
         }
@@ -32,9 +32,10 @@ export default function ClientsTable() {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-1/4">CIN</TableHead>
-                    <TableHead className="w-1/3">Name</TableHead>
-                    <TableHead>Phone</TableHead>
+                    <TableHead>CIN</TableHead>
+                    <TableHead>Nom</TableHead>
+                    <TableHead>Telephone</TableHead>
+                    <TableHead>Dettes</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
             </TableHeader>
@@ -46,6 +47,7 @@ export default function ClientsTable() {
                             <TableCell>{client.cin}</TableCell>
                             <TableCell>{client.nom}</TableCell>
                             <TableCell>{client.telephone}</TableCell>
+                            <TableCell>{client.dettes}</TableCell>
                             <TableCell className="text-right space-x-2">
                                 {/* Show */}
                                 <Link href={route('clients.show', client.id)}>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Model
 {
@@ -15,9 +16,9 @@ class User extends Model
         'dettes'
     ];
 
-    public function employers(): HasMany
+    public function employer(): HasOne
     {
-        return $this->hasMany(Employer::class);
+        return $this->hasOne(Employer::class);
     }
 
     public function commandes(): HasMany

@@ -3,26 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employer;
+use App\Models\Salaire;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class EmployerController extends Controller
 {
-    // 1. Index avec filtres + tri + pagination
+
+    /**
+     * ----------------- Filtering ------------------------
+     * By:
+     *  - CIN , Nom , Telephone, Adresse
+     *  - Actif
+     *  - Debut / Fin Date Embauche
+     *  - Fonction
+     *  - Sort Asc/Desc
+     */
+
     public function index(Request $request)
     {
         $query = Employer::with('user');
 
-        // Filtre search CIN via employer.cin or user.nom
+        // Filtre search CIN , Nom , Telephone, Adresse
         if ($search = $request->input('search')) {
             $query->where('cin', 'like', "%{$search}%")
-                  ->orWhereHas('user', fn($q)=> $q->where('nom', 'like', "%{$search}%"));
+                  ->orWhereHas('user', fn($q)=> $q->where('nom', 'like', "%{$search}%"))
+                  ->orWhereHas('user', fn($q) => $q->where('telephone', 'like', "%{$search}%"))
+                  ->orWhereHas('user', fn($q) => $q->where('adresse', 'like', "%{$search}%"));
+        }
+
+        // Actif?
+        if($actif = $request->input('actif')){
+            $query->where('actif', $actif);
         }
 
         // Filtre par fonction
         if ($fonction = $request->input('fonction')) {
             $query->where('fonction', $fonction);
+        }
+
+        // Debut / Fin Date embauche
+        if($date_debut_embauche = $request->input('date_debut_embauche')){
+            $query->where('date_embauche', '>=', $date_debut_embauche);
+        }
+        if($date_fin_embauche = $request->input('date_fin_embauche')){
+            $query->where('date_embauche', '<=', $date_fin_embauche);
         }
 
         // Tri
@@ -35,7 +63,7 @@ class EmployerController extends Controller
 
         $employers = $query
             ->paginate(10)
-            ->appends($request->only(['search','fonction','sort','direction']));
+            ->appends($request->only(['search','fonction','sort','direction', 'actif','date_debut_embauche', 'date_fin_embauche']));
 
         return Inertia::render('Employers/Index', [
             'employers' => $employers,
@@ -44,6 +72,9 @@ class EmployerController extends Controller
                 'fonction'  => $fonction,
                 'sort'      => $sort,
                 'direction' => $direction,
+                'date_debut_embauche' => $date_debut_embauche,
+                'date_fin_embauche' => $date_fin_embauche,
+                'actif' => $actif
             ],
         ]);
     }
@@ -57,31 +88,70 @@ class EmployerController extends Controller
     // 3. Enregistrer nouvel employé
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'cin'          => 'required|string|unique:employers,cin',
-            'password'     => 'required|string|min:6',
-            'actif'        => 'required|boolean',
-            'date_embauche'=> 'required|date',
-            'fonction'     => 'required|in:directeur,comptable,livreur',
-            'user_id'      => 'required|exists:users,id',
-        ]);
+        $rules = [
+            'nom' => ['required'],
+            'cin' => ['required', 'unique:users,cin'],
+            'fonction' => ['required'],
+            'type' => ['required'],
+            'prix' => ['required']
+        ];
 
-        Employer::create([
-            ...$data,
-            'password' => bcrypt($data['password']),
-        ]);
+        if ($request->fonction === 'directeur' || $request->fonction === 'comptable') {
+            $rules['password'] = ['required'];
+        }
 
-        return redirect()
-            ->route('employers.index')
-            ->with('success', 'Employé créé avec succès.');
+        $validate = $request->validate($rules);
+
+        try {
+            return DB::transaction(function() use ($request) {
+                // add user
+                $user = User::create([
+                    'nom' => $request->nom,
+                    'cin' => $request->cin,
+                    'telephone' => $request->telephone,
+                    'adresse' => $request->adresse,
+                    'dettes' => 0,
+                ]);
+
+                // add employer
+                $employer = Employer::create([
+                    'cin' => $request->cin,
+                    'password' => $request->password,
+                    'actif' => $request->actif ?? true,
+                    'date_embauche' => $request->date_embauche ?? now(),
+                    'fonction' => $request->fonction,
+                    'user_id' => $user->id
+                ]);
+
+                // add salaire
+                $salaire = Salaire::create([
+                    'employer_id' => $employer->id,
+                    'type' => $request->type,
+                    'prix' => $request->prix,
+                    'produit_id' => $request->produit_id || null
+                ]);
+
+                return to_route('employers.index')
+                    ->with('success', 'Employé créé avec succès.');
+            });
+        } catch (Exception $e) {
+            return back()
+                ->withInput()
+                ->with(['error'=> 'Une erreur est survenue lors de la création de l\'employé.', 'err' => $e->getMessage()]);
+        }
     }
 
     // 4. Afficher un employé
     public function show(Employer $employer)
     {
-        $employer->load('user');
+        $absences = [
+            'data' => $employer->absences(),
+            'countAll' => $employer->absences()->count(),
+            'countThisMonth' => $employer->absences()->whereMonth('created_at', now()->month)->count(),
+        ];
         return Inertia::render('Employers/Show', [
-            'employer' => $employer,
+            'employer' => $employer->load(['user', 'salaires.produit', 'budgetsChiffeurs', 'commandesFournisseurLivrees', 'livraisons', 'rapportsSalaires']),
+            'absences' => $absences,
         ]);
     }
 
@@ -102,7 +172,7 @@ class EmployerController extends Controller
             'password'     => 'nullable|string|min:6',
             'actif'        => 'required|boolean',
             'date_embauche'=> 'required|date',
-            'fonction'     => 'required|in:directeur,comptable,livreur',
+            'fonction'     => 'required|in:directeur,comptable,livreur,ouvrier',
             'user_id'      => 'required|exists:users,id',
         ]);
 

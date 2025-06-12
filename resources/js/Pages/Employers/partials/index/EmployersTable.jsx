@@ -12,6 +12,8 @@ import {
 import { Eye, Edit2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EmployerIndexContext } from '../../Index'
+import { Card } from '@/components/ui/card'
+import Toast from '@/functions/Toast'
 
 export default function EmployersTable() {
     const { employers, filters } = useContext(EmployerIndexContext)
@@ -21,60 +23,64 @@ export default function EmployersTable() {
         if (confirm('Voulez-vous vraiment supprimer cet employé ?')) {
             router.delete(route('employers.destroy', id), {
                 preserveState: true,
-                onSuccess: () => {
-                    /* toast */
+                onSuccess: page => {
+                    Toast(page.props.flash)
                 },
             })
         }
     }
 
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>CIN</TableHead>
-                    <TableHead>Fonction</TableHead>
-                    <TableHead>Date d'embauche</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-            </TableHeader>
+        <Card className="p-4">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>CIN</TableHead>
+                        <TableHead>Nom</TableHead>
+                        <TableHead>Fonction</TableHead>
+                        <TableHead>Date d'embauche</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
 
-            <TableBody>
-                {data.length > 0 ? (
-                    data.map(emp => (
-                        <TableRow key={emp.id}>
-                            <TableCell>{emp.cin}</TableCell>
-                            <TableCell>{emp.fonction}</TableCell>
-                            <TableCell>{emp.date_embauche}</TableCell>
-                            <TableCell className="text-right space-x-2">
-                                <Link href={route('employers.show', emp.id)}>
-                                    <Button variant="link" className="p-0 text-blue-500">
-                                        <Eye size={18} />
+                <TableBody>
+                    {data.length > 0 ? (
+                        data.map(emp => (
+                            <TableRow key={emp.id}>
+                                <TableCell>{emp.cin}</TableCell>
+                                <TableCell>{emp.user.nom}</TableCell>
+                                <TableCell>{emp.fonction}</TableCell>
+                                <TableCell>{emp.date_embauche}</TableCell>
+                                <TableCell className="text-right space-x-2">
+                                    <Link href={route('employers.show', emp.id)}>
+                                        <Button variant="link" className="p-0 text-blue-500">
+                                            <Eye size={18} />
+                                        </Button>
+                                    </Link>
+                                    <Link href={route('employers.edit', emp.id)}>
+                                        <Button variant="link" className="p-0 text-green-500">
+                                            <Edit2 size={18} />
+                                        </Button>
+                                    </Link>
+                                    <Button
+                                        variant="link"
+                                        className="p-0 text-red-500"
+                                        onClick={() => handleDelete(emp.id)}
+                                    >
+                                        <Trash2 size={18} />
                                     </Button>
-                                </Link>
-                                <Link href={route('employers.edit', emp.id)}>
-                                    <Button variant="link" className="p-0 text-green-500">
-                                        <Edit2 size={18} />
-                                    </Button>
-                                </Link>
-                                <Button
-                                    variant="link"
-                                    className="p-0 text-red-500"
-                                    onClick={() => handleDelete(emp.id)}
-                                >
-                                    <Trash2 size={18} />
-                                </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={4} className="text-center">
+                                Aucun employé trouvé.
                             </TableCell>
                         </TableRow>
-                    ))
-                ) : (
-                    <TableRow>
-                        <TableCell colSpan={4} className="text-center">
-                            Aucun employé trouvé.
-                        </TableCell>
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+                    )}
+                </TableBody>
+            </Table>
+        </Card>
     )
 }
